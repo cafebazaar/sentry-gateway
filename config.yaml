@@ -1,0 +1,18 @@
+proxy:
+  targetAddress: http://127.0.0.1
+  timeout: 28s
+  keepAlive: 20s
+  maxIdleConns: 20
+  idleConnTimeout: 5s
+  expectContinueTimeout: 2s
+
+throttle:
+  RPS: 20
+  burst: 20
+
+metrics:
+  listenAdrress: 0.0.0.0:9090
+
+listenAddress: 0.0.0.0:80
+
+logLevel: debug
