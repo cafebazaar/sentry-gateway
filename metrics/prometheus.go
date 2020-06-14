@@ -10,17 +10,23 @@ import (
 	"net/http"
 )
 
+var projectRequestCounter = promauto.NewCounterVec(prometheus.CounterOpts{
+	Name: "sentry_gateway_requests",
+	Help: "Requests to each project",
+}, []string{"project_id", "state"})
+
 var responseDuration = promauto.NewHistogramVec(prometheus.HistogramOpts{
-	Name: "service_response_duration_seconds",
-	Help: "Internal services duration",
+	Name: "sentry_gateway_response_duration",
+	Help: "Sentry response durations",
 }, []string{"status_code"})
 
 var openConnections = promauto.NewGauge(prometheus.GaugeOpts{
-	Name: "circuit_breaker_state",
-	Help: "If circuit breaker is open or notٔ",
+	Name: "sentry_gateway_response_duration_open_connection",
+	Help: "Number of open connectionsٔ",
 })
 
 var allCollector = []prometheus.Collector{
+	projectRequestCounter,
 	responseDuration,
 	openConnections,
 }

@@ -22,11 +22,11 @@ func New(next http.Handler, config Config) http.Handler {
 	return &Throttle{next, config, map[string]*rate.Limiter{}}
 }
 
-func (t *Throttle) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
+func (t *Throttle) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	logrus.Debug("Throttle Middleware")
 
-	projectId := mux.Vars(r)["id"]
-	logrus.Printf("Got %s, project: %s", r.URL, projectId)
+	projectId := mux.Vars(req)["id"]
+	logrus.Printf("Got %s, project: %s", req.URL, projectId)
 	limiter, ok := t.limiters[projectId]
 	if !ok {
 		logrus.Printf("New limiter for project %s with rps %s and burst %s",
@@ -39,5 +39,5 @@ func (t *Throttle) ServeHTTP(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusTooManyRequests)
 		return
 	}
-	t.next.ServeHTTP(rw, r)
+	t.next.ServeHTTP(rw, req)
 }
