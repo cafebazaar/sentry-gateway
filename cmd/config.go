@@ -41,5 +41,8 @@ func LoadConfig() (Config, error) {
 	}
 
 	logrus.SetLevel(logLevel)
+
+	logrus.Infof("Config loaded: %v", config)
+
 	return config, nil
 }

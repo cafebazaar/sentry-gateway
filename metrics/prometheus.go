@@ -46,25 +46,26 @@ func New(config Config) (*Server, error) {
 	ins := &Server{
 		config: config,
 	}
-	logrus.Debugf("[prometheus] Going to listen on %s", ins.config.ListenAddress)
-	newListener, err := net.Listen("tcp", ins.config.ListenAddress)
+	logrus.Debugf("[prometheus] Going to listen on %s.", config.ListenAddress)
+	listener, err := net.Listen("tcp", config.ListenAddress)
 	if err != nil {
 		return nil, errors.Wrap(err, "fail to listen")
 	}
 
-	if config.Enabled {
-		for _, collector := range allCollector {
-			if err := prometheus.Register(collector); err != nil {
-				if err.Error() != (prometheus.AlreadyRegisteredError{}).Error() {
-					return nil, errors.Wrapf(err, "fail to register metric %v", collector)
-				}
-			}
-		}
-	} else {
+	if !config.Enabled {
 		logrus.Warn("prometheus is disabled by the config file")
+		return ins, nil
 	}
 
-	ins.listener = newListener
+	for _, collector := range allCollector {
+		if err := prometheus.Register(collector); err != nil {
+			if err.Error() != (prometheus.AlreadyRegisteredError{}).Error() {
+				return nil, errors.Wrapf(err, "fail to register metric %v", collector)
+			}
+		}
+	}
+
+	ins.listener = listener
 	ins.handler = promhttp.Handler()
 
 	return ins, nil
