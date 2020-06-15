@@ -11,7 +11,8 @@ throttle:
   burst: 20
 
 metrics:
-  listenAdrress: 0.0.0.0:9090
+  enabled: true
+  listenAddress: 0.0.0.0:9090
 
 listenAddress: 0.0.0.0:80
 
